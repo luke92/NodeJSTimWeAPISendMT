@@ -1,22 +1,29 @@
 require('dotenv').config();
 const channelType = require('./channel')
 var request = require('request');
-const crypto = require("crypto");
+const CipherAesEcb = require('./cipherAesEcb');
 
 var partnerRole = process.env.PARTNER_ROLE;
 var apiKey = process.env.API_KEY;
-var productId =  parseInt(process.env.PRODUCT_ID)
-var pricepointId =  parseInt(process.env.PRICEPOINT_ID)
+var productId =  parseInt(process.env.PRODUCT_ID);
+var pricepointId =  parseInt(process.env.PRICEPOINT_ID);
 var secretKey = process.env.PRE_SHARED_KEY;
 var phoneNumber = process.env.PHONE_NUMBER;
+var url = 'http://entel.timwe.com/pe/ma/api/external/v1/' + channelType.SMS + '/mt/' + partnerRole;
 
+console.log("URL : " + url)
+console.log("Product Id : " + productId)
+console.log("PricePoint Id : " + pricepointId)
+console.log("Phone number : " + phoneNumber)
+
+let cipher = new CipherAesEcb("aes-128-ecb",secretKey);
 var currentMiliseconds = Date.now()
 var strToEncrypt = process.env.SERVICE_ID + '#' + currentMiliseconds;
-let encryptedMsg = encrypt(strToEncrypt, secretKey);
+let encryptedMsg = cipher.encrypt(strToEncrypt);
 
 var options = {
   'method': 'POST',
-  'url': 'http://entel.timwe.com/pe/ma/api/external/v1/' + channelType.SMS + '/mt/' + partnerRole,
+  'url': url,
   'headers': {
     'apikey': apiKey,
     'authentication': encryptedMsg,
@@ -39,14 +46,3 @@ request(options, function (error, response) {
   if (error) throw new Error(error);
   console.log(response.body);
 });
-
-function encrypt(input, key) { 
-    const algorithm = 'aes-128-cbc';   
-    key = crypto.scryptSync(key, 'salt', 16);       
-    const iv = Buffer.alloc(16, 0);
-    const cipher = crypto.createCipheriv(algorithm, key, iv);
-    cipher.setAutoPadding(true);
-    let encrypted = cipher.update(input, 'utf8', 'base64');
-    encrypted += cipher.final('base64');
-    return encrypted.replace('+','-');
-}
