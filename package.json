@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/luke92/NodeJSTimWeAPISendMT/issues"
   },
-  "homepage": "https://github.com/luke92/NodeJSTimWeAPISendMT#readme"
+  "homepage": "https://github.com/luke92/NodeJSTimWeAPISendMT#readme",
+  "dependencies": {
+    "aes-encryption": "^1.0.4"
+  }
 }

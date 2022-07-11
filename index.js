@@ -1,13 +1,20 @@
 var http = require('follow-redirects').http;
 var fs = require('fs');
+const AesEncryption = require('aes-encryption');
 
 var partnerRole = process.env.PARTNER_ROLE;
 var apiKey = process.env.API_KEY;
 var productId =  parseInt(process.env.PRODUCT_ID)
 var pricepointId =  parseInt(process.env.PRICEPOINT_ID)
+var secretKey = process.env.PRE_SHARED_KEY;
+var phoneNumber = process.env.PHONE_NUMBER;
+
+const aes = new AesEncryption();
+aes.setSecretKey(secretKey)
+
 var currentMiliseconds = Date.now()
 var strToEncrypt = process.env.SERVICE_ID + '#' + currentMiliseconds;
-
+const encrypted = aes.encrypt(strToEncrypt)
 
 var options = {
   'method': 'POST',
@@ -15,7 +22,7 @@ var options = {
   'path': '/pe/ma/api/external/v1/' + ChannelType.SMS + '/mt/' + partnerRole,
   'headers': {
     'apikey': apiKey,
-    'authentication': '5p9Iy5sf7B6bat1dRynZ3ise/YruRhnYYts7EYFDCWiye89MtOUA2J1KG9lQnX7E6+LNlzltsZKzNCf3ni84ZQ',
+    'authentication': encrypted,
     'Content-Type': 'application/json'
   },
   'maxRedirects': 20
@@ -41,7 +48,7 @@ var req = http.request(options, function (res) {
 var postData = JSON.stringify({
   "productId": productId,
   "pricepointId": pricepointId,
-  "msisdn": "541158882866",
+  "msisdn": phoneNumber,
   "mcc": "716",
   "mnc": "17",
   "text": "Prueba de SendMT",
