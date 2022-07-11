@@ -19,6 +19,7 @@
   "homepage": "https://github.com/luke92/NodeJSTimWeAPISendMT#readme",
   "dependencies": {
     "aes-encryption": "^1.0.4",
+    "crypto": "^1.0.1",
     "dotenv": "^16.0.1",
     "request": "^2.88.2"
   }

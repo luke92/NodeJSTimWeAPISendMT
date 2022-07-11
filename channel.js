@@ -1,4 +1,4 @@
-const ChannelType = {
+module.exports = Object.freeze({
     SMS: 'sms',
     WEB: 'web',
     IVR: 'ivr',
@@ -8,5 +8,5 @@ const ChannelType = {
     USSD: 'ussd',
     APP: 'app',
     INAPP: 'inapp'
-}
+});
 // {sms, web, ivr, obd, wap, sat, ussd, app, inapp}
